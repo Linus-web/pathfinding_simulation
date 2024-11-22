@@ -1,7 +1,6 @@
 
-
-use indicatif::ProgressBar;
-use indicatif::ProgressStyle;
+#[cfg(not(test))]
+use indicatif::{ProgressBar, ProgressStyle};
 use rand::thread_rng;
 use rand::seq::{IteratorRandom,SliceRandom};
 mod node;
@@ -38,11 +37,16 @@ impl Maze {
         let mut stack: Vec<(usize,usize)>  = Vec::new();
         let mut rng = thread_rng();
 
+
+        #[cfg(not(test))]
         let bar = ProgressBar::new(self.height as u64 *self.width as u64);
 
+
+        #[cfg(not(test))]
         bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
         .unwrap()
         .progress_chars("##-"));
+        #[cfg(not(test))]
         bar.set_message("Generating maze...");
         let start_x = rand::random::<usize>() % self.width as usize;
         let start_y = rand::random::<usize>() % self.height as usize;
@@ -76,11 +80,16 @@ impl Maze {
                 stack.push((x, y));
                 stack.push((nx, ny));
 
+
+
+                #[cfg(not(test))]
                 bar.inc(1);
             }
 
         }
 
+
+        #[cfg(not(test))]
         bar.finish();
 
     }
@@ -90,13 +99,16 @@ impl Maze {
         let mut walls: Vec<(usize, usize, usize, usize)> = Vec::new();
         let mut rng = thread_rng();
     
+        #[cfg(not(test))]
         let bar = ProgressBar::new((self.height * self.width) as u64);
     
+        #[cfg(not(test))]
         bar.set_style(
             ProgressStyle::with_template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
                 .unwrap()
                 .progress_chars("##-"),
         );
+        #[cfg(not(test))]
         bar.set_message("Generating maze...");
     
         let start_x = rand::random::<usize>() % self.width;
@@ -158,12 +170,12 @@ impl Maze {
                     if y2 < self.height - 1 && !self.grid[y2 + 1][x2].visited {
                         walls.push((x2, y2, x2, y2 + 1)); 
                     }
-    
+                    #[cfg(not(test))]
                     bar.inc(1);
                 }
             }
         }
-    
+        #[cfg(not(test))]
         bar.finish();
     }
 
@@ -248,7 +260,7 @@ mod tests {
         assert!(small_maze.grid[0][0].visited);
         assert_eq!(small_maze.grid[0][0].walls, [true, true, true, true]); 
 
-        let mut large_maze = Maze::new(100, 100);
+        let mut large_maze = Maze::new(1000, 1000);
         large_maze.prims_maze();
 
         for row in large_maze.grid.iter() {
