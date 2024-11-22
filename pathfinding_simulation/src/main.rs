@@ -113,15 +113,15 @@ fn handle_key_input(
         Key::Enter => {
             match menu_stack.last() {
                 Some(MenuState::MainMenu) => match *selected_index {
-                    0 => menu_stack.push(MenuState::AlgorithmMenu), // Test algorithms
-                    1 => menu_stack.push(MenuState::MazeMenu),      // Generate a random maze
-                    2 => menu_stack.push(MenuState::SettingsMenu),  // Settings
-                    3 => return Ok(true),                           // Exit program
+                    0 => menu_stack.push(MenuState::AlgorithmMenu), 
+                    1 => menu_stack.push(MenuState::MazeMenu),      
+                    2 => menu_stack.push(MenuState::SettingsMenu),  
+                    3 => return Ok(true),
                     _ => {}
                 },
                 Some(MenuState::AlgorithmMenu) => match *selected_index {
                     0 => {
-                        menu_stack.pop(); // Back to the previous menu
+                        menu_stack.pop(); 
                     }
                     1 => println!("Running A* algorithm..."),
                     2 => println!("Running Dijkstra's algorithm..."),
@@ -131,7 +131,7 @@ fn handle_key_input(
                 },
                 Some(MenuState::MazeMenu) => match *selected_index {
                     0 => {
-                        menu_stack.pop(); // Back to the previous menu
+                        menu_stack.pop(); 
                     }
                     1 => {
                         let mut maze = Maze::new(20, 20);
@@ -161,9 +161,9 @@ fn handle_key_input(
                 },
                 Some(MenuState::SettingsMenu) => {
                     println!("Settings functionality not yet implemented.");
-                    menu_stack.pop(); // Back to the previous menu
+                    menu_stack.pop(); 
                 }
-                None => return Ok(true), // Exit if the stack is empty
+                None => return Ok(true), 
             }
             *selected_index = 0;
         }
