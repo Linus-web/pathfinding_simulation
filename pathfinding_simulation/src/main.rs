@@ -4,7 +4,6 @@ use std::io::{self};
 mod maze;
 mod save;
 
-use maze::Maze;
 use save::save_maze_image;
 
 #[derive(PartialEq,Debug)]
