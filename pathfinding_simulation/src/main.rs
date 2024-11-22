@@ -179,7 +179,6 @@ fn handle_key_input(
 #[cfg(test)]
 mod main_tests {
     use super::*;
-    use console::Term;
 
     #[test]
     fn test_main_menu_options() {
