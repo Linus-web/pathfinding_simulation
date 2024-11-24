@@ -136,9 +136,12 @@ impl eframe::App for Main {
             let generate_maze_btn = ui.button("Generate Maze");
 
             if generate_maze_btn.clicked() {
-                // Create a new WindowState
-                let window = WindowState {
-                    id: self.next_window_id,
+
+                if self.windows.len() < 4 {
+
+                    // Create a new WindowState
+                    let window = WindowState {
+                        id: self.next_window_id,
                     title: format!("Maze Window {}", self.next_window_id),
                     is_open: true,
                     // Initialize other fields as needed
@@ -146,7 +149,10 @@ impl eframe::App for Main {
             
                 self.windows.push(window);
                 self.next_window_id += 1;
-            
+                
+            }else {
+                println!("cannot generate more windows")
+            }
                 // Optionally, generate the maze and associate it with the window
             }
             
@@ -155,36 +161,71 @@ impl eframe::App for Main {
         });
         
             egui::CentralPanel::default().show(ctx, |ui| {
-                // Your central panel content
-            
-                // Use a temporary vector to collect indices of windows to remove
-                let mut windows_to_remove = Vec::new();
-            
-                for (index, window) in self.windows.iter_mut().enumerate() {
-                    if window.is_open {
-                        egui::Window::new(&window.title)
-                            .id(egui::Id::new(window.id))
-                            .resizable(true)
-                            .collapsible(true)
-                            .open(&mut window.is_open) // Binds the window's open state
-                            .show(ctx, |ui| {
-                                // Replace with your maze rendering code
-                                ui.label(format!("Content of {}", window.title));
+                // Get the available size of the CentralPanel
+                let available_size = ui.available_size();
+        
+                // Collect open windows
+                let open_windows: Vec<&mut WindowState> = self.windows.iter_mut().filter(|w| w.is_open).collect();
+        
+                let num_windows = open_windows.len();
+                if num_windows > 0 {
 
-                                
-                            });
-                    } else {
-                        // Mark the window for removal
-                        windows_to_remove.push(index);
-                    }
-                }
-            
-                // Remove closed windows from the collection
-                for index in windows_to_remove.iter().rev() {
-                    self.windows.remove(*index);
+
+                    
+                    let num_of_cells = open_windows.len() as f32; // N
+                    let max_cols = 2; 
+                    
+                    let initial_cols = num_of_cells.sqrt().ceil() as usize;
+                    
+
+
+                    let num_of_cols = std::cmp::min(initial_cols, max_cols);
+                    
+                    let num_of_rows = (num_of_cells / num_of_cols as f32).ceil() as usize;
+
+                    let mut window_iter = open_windows.into_iter();
+
+
+                    let cell_width = available_size.x / num_of_cols as f32;
+                    let cell_height = available_size.y / num_of_rows as f32;
+
+
+
+                    egui::Grid::new("window_grid")
+                                .num_columns(num_of_cols)
+                                .show(ui, |ui| {
+                                    for _row in 0..num_of_rows {
+                                        for _col in 0..num_of_cols {
+                                            if let Some(window) = window_iter.next() {
+                                                ui.group(|ui| {
+
+                                                    ui.set_min_size(egui::Vec2 { x: cell_width, y: cell_height });
+
+                                                    // Display window content here
+                                                    ui.heading(&window.title);
+                                                    if ui.button("Close").clicked() {
+                                                        window.is_open = false;
+                                                    }
+                                                    ui.separator();
+                                                    // Replace with your maze rendering code
+                                                    ui.label(format!("Content of {}", window.title));
+                                                });
+                                            } else {
+                                                // No more windows, fill the cell with empty space
+                                                ui.allocate_space(ui.available_size());
+                                            }
+                                            
+                                        }
+                                        ui.end_row();
+                                    }
+                                });
+                    
                 }
             });
 
+
+    // Remove closed windows
+    self.windows.retain(|window| window.is_open);
 
     }
 }
