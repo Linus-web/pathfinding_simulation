@@ -1,7 +1,7 @@
 
 use std::fmt;
 
-#[derive(serde::Serialize, serde::Deserialize, PartialEq)]
+#[derive(PartialEq)]
 pub enum MazeAlgorithms {
     Prims,
     Kruskals,
@@ -19,7 +19,7 @@ impl fmt::Display for MazeAlgorithms {
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, PartialEq)]
+#[derive(PartialEq)]
 pub enum PathfindingAlgorithms {
     Astar,
     Dijkstra,

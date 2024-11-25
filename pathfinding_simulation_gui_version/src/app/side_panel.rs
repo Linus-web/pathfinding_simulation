@@ -1,5 +1,5 @@
 
-use egui::InnerResponse;
+use egui::{InnerResponse, Window};
 
 
 use crate::Main;
@@ -73,13 +73,9 @@ impl Main{
     
                 if self.windows.len() < 4 {
 
-                    let window = WindowState {
-                        id: self.next_window_id,
-                    title: format!("Window {}", self.settings.maze_algorithm),
-                    is_open: true,
-                    generating: false,
-                    grid: Maze::new(self.settings.maze_size.0, self.settings.maze_size.1)
-                };
+                    let grid = Maze::new(self.settings.maze_size.0, self.settings.maze_size.1);
+
+                    let window = WindowState::new(self.next_window_id, format!("Window {}", self.settings.maze_algorithm), grid);
             
                 self.windows.push(window);
                 self.next_window_id += 1;

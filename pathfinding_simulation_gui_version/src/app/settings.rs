@@ -1,10 +1,6 @@
 
-use serde::{Deserialize, Serialize};
-
 use crate::app::algorithms::{MazeAlgorithms, PathfindingAlgorithms};
 
-#[derive(Deserialize, Serialize)]
-#[serde(default)]
 pub struct AppSettings {
     pub maze_algorithm: MazeAlgorithms,
     pub pathfinding_algorithm: PathfindingAlgorithms,

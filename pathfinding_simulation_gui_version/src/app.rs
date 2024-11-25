@@ -13,9 +13,6 @@ pub use settings::AppSettings;
 pub use maze::Maze;
 
 
-
-#[derive(serde::Deserialize, serde::Serialize)]
-#[serde(default)]
 pub struct Main {
     counter: i32,
     user_input: String,
