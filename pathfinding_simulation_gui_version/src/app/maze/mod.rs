@@ -1,12 +1,8 @@
-
+use rand::seq::{IteratorRandom, SliceRandom};
 use rand::thread_rng;
-use rand::seq::{IteratorRandom,SliceRandom};
 pub mod node;
 
 pub use node::Node;
-
-
-#[derive(serde::Deserialize, serde::Serialize)]
 
 pub struct Maze {
     pub width: usize,
@@ -29,18 +25,15 @@ impl Maze {
             })
             .collect();
 
-        Maze { width, height, grid }
+        Maze {
+            width,
+            height,
+            grid,
+        }
     }
-
-    pub fn is_wall(&self, x: usize, y: usize) -> bool {
-        // For simplicity, consider a cell with all walls intact as a wall
-        self.grid[y][x].walls.iter().all(|&wall| wall)
-    }
-    
 
     pub fn dfs_maze(&mut self) {
-
-        let mut stack: Vec<(usize,usize)>  = Vec::new();
+        let mut stack: Vec<(usize, usize)> = Vec::new();
         let mut rng = thread_rng();
 
         let start_x = rand::random::<usize>() % self.width as usize;
@@ -48,23 +41,22 @@ impl Maze {
 
         self.grid[start_y][start_x].visited = true;
 
-        stack.push((start_y,start_x));
+        stack.push((start_y, start_x));
 
-        
-        while let Some((x,y)) = stack.pop() {
+        while let Some((x, y)) = stack.pop() {
             let mut neighbors = Vec::new();
 
-             if x > 0 && !self.grid[y][x - 1].visited {
-                neighbors.push((x - 1, y, 3, 1)); 
+            if x > 0 && !self.grid[y][x - 1].visited {
+                neighbors.push((x - 1, y, 3, 1));
             }
             if x < self.width - 1 && !self.grid[y][x + 1].visited {
-                neighbors.push((x + 1, y, 1, 3)); 
+                neighbors.push((x + 1, y, 1, 3));
             }
             if y > 0 && !self.grid[y - 1][x].visited {
-                neighbors.push((x, y - 1, 0, 2)); 
+                neighbors.push((x, y - 1, 0, 2));
             }
             if y < self.height - 1 && !self.grid[y + 1][x].visited {
-                neighbors.push((x, y + 1, 2, 0)); 
+                neighbors.push((x, y + 1, 2, 0));
             }
 
             if let Some(&(nx, ny, current_wall, neighbor_wall)) = neighbors.choose(&mut rng) {
@@ -74,23 +66,19 @@ impl Maze {
                 self.grid[ny][nx].visited = true;
                 stack.push((x, y));
                 stack.push((nx, ny));
-
             }
-
         }
-
     }
-
 
     pub fn prims_maze(&mut self) {
         let mut walls: Vec<(usize, usize, usize, usize)> = Vec::new();
         let mut rng = thread_rng();
-    
+
         let start_x = rand::random::<usize>() % self.width;
         let start_y = rand::random::<usize>() % self.height;
-    
+
         self.grid[start_y][start_x].visited = true;
-    
+
         if start_x > 0 {
             walls.push((start_x, start_y, start_x - 1, start_y)); // Left wall
         }
@@ -103,18 +91,16 @@ impl Maze {
         if start_y < self.height - 1 {
             walls.push((start_x, start_y, start_x, start_y + 1)); // Bottom wall
         }
-    
-        
-        walls.shuffle(&mut rng);
 
+        walls.shuffle(&mut rng);
 
         while !walls.is_empty() {
             if let Some(index) = (0..walls.len()).choose(&mut rng) {
                 let (x1, y1, x2, y2) = walls.remove(index);
-    
+
                 if !self.grid[y2][x2].visited {
                     self.grid[y2][x2].visited = true;
-    
+
                     if x1 == x2 {
                         if y1 > y2 {
                             self.grid[y1][x1].walls[0] = false; // Top wall
@@ -132,28 +118,24 @@ impl Maze {
                             self.grid[y2][x2].walls[3] = false; // Left wall
                         }
                     }
-    
+
                     if x2 > 0 && !self.grid[y2][x2 - 1].visited {
-                        walls.push((x2, y2, x2 - 1, y2)); 
+                        walls.push((x2, y2, x2 - 1, y2));
                     }
                     if x2 < self.width - 1 && !self.grid[y2][x2 + 1].visited {
-                        walls.push((x2, y2, x2 + 1, y2)); 
+                        walls.push((x2, y2, x2 + 1, y2));
                     }
                     if y2 > 0 && !self.grid[y2 - 1][x2].visited {
-                        walls.push((x2, y2, x2, y2 - 1)); 
+                        walls.push((x2, y2, x2, y2 - 1));
                     }
                     if y2 < self.height - 1 && !self.grid[y2 + 1][x2].visited {
-                        walls.push((x2, y2, x2, y2 + 1)); 
+                        walls.push((x2, y2, x2, y2 + 1));
                     }
                 }
             }
         }
     }
-
 }
-
-
-
 
 #[cfg(test)]
 mod tests {
@@ -196,9 +178,8 @@ mod tests {
         let mut large_maze = Maze::new(1000, 1000);
         large_maze.dfs_maze();
 
-        assert!(large_maze.grid[0][0].visited); 
+        assert!(large_maze.grid[0][0].visited);
     }
-
 
     #[test]
     fn test_prims_maze() {
@@ -220,7 +201,10 @@ mod tests {
                 }
             }
         }
-        assert!(has_open_wall, "Maze should have at least one open wall between cells.");
+        assert!(
+            has_open_wall,
+            "Maze should have at least one open wall between cells."
+        );
     }
 
     #[test]
@@ -229,7 +213,7 @@ mod tests {
         small_maze.prims_maze();
 
         assert!(small_maze.grid[0][0].visited);
-        assert_eq!(small_maze.grid[0][0].walls, [true, true, true, true]); 
+        assert_eq!(small_maze.grid[0][0].walls, [true, true, true, true]);
 
         let mut large_maze = Maze::new(1000, 1000);
         large_maze.prims_maze();
@@ -261,9 +245,9 @@ mod tests {
                 break;
             }
         }
-        assert!(!identical, "Mazes generated by Prim's algorithm should be different.");
+        assert!(
+            !identical,
+            "Mazes generated by Prim's algorithm should be different."
+        );
     }
-
-
 }
-

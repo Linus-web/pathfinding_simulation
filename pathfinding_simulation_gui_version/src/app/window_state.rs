@@ -2,14 +2,14 @@ use crate::app::Maze;
 use egui::{Color32, TextureHandle, TextureOptions};
 
 pub struct WindowState {
-    pub id: usize,            // Unique identifier for the window
-    pub title: String,        // Title of the window
-    pub is_open: bool,        // Whether the window is open
-    pub generating: bool,     // Whether the maze is currently being generated
-    pub maze: Maze,           // The maze data
+    pub id: usize,        // Unique identifier for the window
+    pub title: String,    // Title of the window
+    pub is_open: bool,    // Whether the window is open
+    pub generating: bool, // Whether the maze is currently being generated
+    pub maze: Maze,       // The maze data
 
     pub maze_texture: Option<TextureHandle>, // Cached texture of the maze
-    pub needs_redraw: bool,   // Flag indicating if the maze needs to be redrawn
+    pub needs_redraw: bool,                  // Flag indicating if the maze needs to be redrawn
 }
 
 impl WindowState {
@@ -25,27 +25,22 @@ impl WindowState {
         }
     }
 
+    pub fn generate_maze_texture(&mut self, ctx: &egui::Context, size: [usize; 2]) {
+        let width = size[0];
+        let height = size[1];
 
-        pub fn generate_maze_texture(&mut self, ctx: &egui::Context, size: [usize; 2]) {
-            let width = size[0];
-            let height = size[1];
-    
-            let mut image = egui::ColorImage::new([width, height], Color32::WHITE);
-    
-            // Render the maze onto the image
-            self.render_maze_to_image(&mut image);
-    
-            let texture_options = TextureOptions::LINEAR;
-    
-            self.maze_texture = Some(ctx.load_texture(
-                format!("maze_texture_{}", self.id),
-                image,
-                texture_options,
-            ));
-    
-            self.needs_redraw = false;
-        }
-    
+        let mut image = egui::ColorImage::new([width, height], Color32::WHITE);
+
+        // Render the maze onto the image
+        self.render_maze_to_image(&mut image);
+
+        let texture_options = TextureOptions::LINEAR;
+
+        self.maze_texture =
+            Some(ctx.load_texture(format!("maze_texture_{}", self.id), image, texture_options));
+
+        self.needs_redraw = false;
+    }
 
     fn render_maze_to_image(&self, image: &mut egui::ColorImage) {
         let maze_width = self.maze.width;

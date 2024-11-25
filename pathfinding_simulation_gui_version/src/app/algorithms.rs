@@ -1,11 +1,10 @@
-
 use std::fmt;
 
 #[derive(PartialEq)]
 pub enum MazeAlgorithms {
     Prims,
     Kruskals,
-    DFS
+    DFS,
 }
 
 impl fmt::Display for MazeAlgorithms {
@@ -13,7 +12,7 @@ impl fmt::Display for MazeAlgorithms {
         let name = match self {
             MazeAlgorithms::Prims => "Prim's Algorithm",
             MazeAlgorithms::Kruskals => "Kruskal's Algorithm",
-            MazeAlgorithms::DFS => "DFS Algorithm"
+            MazeAlgorithms::DFS => "DFS Algorithm",
         };
         write!(f, "{}", name)
     }

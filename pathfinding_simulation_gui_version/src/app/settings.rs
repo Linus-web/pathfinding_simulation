@@ -1,4 +1,3 @@
-
 use crate::app::algorithms::{MazeAlgorithms, PathfindingAlgorithms};
 
 pub struct AppSettings {
