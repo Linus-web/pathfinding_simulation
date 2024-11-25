@@ -1,0 +1,24 @@
+
+use serde::{Deserialize, Serialize};
+
+use crate::app::algorithms::{MazeAlgorithms, PathfindingAlgorithms};
+
+#[derive(Deserialize, Serialize)]
+#[serde(default)]
+pub struct AppSettings {
+    pub maze_algorithm: MazeAlgorithms,
+    pub pathfinding_algorithm: PathfindingAlgorithms,
+    pub maze_size: (usize, usize),
+    pub visualization_speed: i32,
+}
+
+impl Default for AppSettings {
+    fn default() -> Self {
+        Self {
+            maze_algorithm: MazeAlgorithms::Prims,
+            pathfinding_algorithm: PathfindingAlgorithms::Astar,
+            maze_size: (100, 100),
+            visualization_speed: 1,
+        }
+    }
+}
