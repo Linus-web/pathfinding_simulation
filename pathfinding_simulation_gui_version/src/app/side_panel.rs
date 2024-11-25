@@ -2,10 +2,10 @@
 use egui::InnerResponse;
 
 
-
 use crate::Main;
 use crate::app::{MazeAlgorithms,WindowState};
 
+use super::Maze;
 
 
 impl Main{
@@ -15,7 +15,6 @@ impl Main{
         return egui::SidePanel::left("side_panel").show(ctx, |ui| {
             ui.set_min_width(250.0);
     
-    
             ui.heading("Settings").highlight();
             
     
@@ -24,20 +23,20 @@ impl Main{
     
             ui.heading("Map Settings");
 
-            ui.add_space(10.0);
+            ui.add_space(15.0);
 
             ui.heading("algorithm");
     
-            ui.add_space(20.0);
+            ui.add_space(5.0);
 
-            for options in MazeAlgorithms {
-                
-            }
                 ui.horizontal(|ui| {
                     ui.selectable_value(&mut self.settings.maze_algorithm, MazeAlgorithms::Prims, "Prim's algorithm");
                     ui.selectable_value(&mut self.settings.maze_algorithm, MazeAlgorithms::Kruskals, "Kruskal's algorithm");
                 });
                 ui.end_row();
+                ui.horizontal(|ui| {
+                    ui.selectable_value(&mut self.settings.maze_algorithm, MazeAlgorithms::DFS, "DFS algorithm");
+                });
             
             ui.add_space(10.0);
     
@@ -68,28 +67,41 @@ impl Main{
             ui.add_space(10.0);
     
     
-            let generate_maze_btn = ui.button("Generate Maze");
+            let create_window_btn = ui.button("Create window");
     
-            if generate_maze_btn.clicked() {
+            if create_window_btn.clicked() {
     
                 if self.windows.len() < 4 {
-    
-                    // Create a new WindowState
+
                     let window = WindowState {
                         id: self.next_window_id,
-                    title: format!("Maze Window {}", self.next_window_id),
+                    title: format!("Window {}", self.settings.maze_algorithm),
                     is_open: true,
-                    // Initialize other fields as needed
+                    generating: false,
+                    grid: Maze::new(self.settings.maze_size.0, self.settings.maze_size.1)
                 };
             
                 self.windows.push(window);
                 self.next_window_id += 1;
                 
-            }else {
-                println!("cannot generate more windows")
+            }     
             }
-                // Optionally, generate the maze and associate it with the window
-            }
+
+            let start_maze_generation_bth = ui.button("generate the mazes");
+
+            if start_maze_generation_bth.clicked(){
+
+                if self.windows.len() > 0 {
+
+                    for window_index in 0..self.windows.len(){
+
+                        self.windows[window_index].generating = true
+
+                    }
+                    
+                };
+                
+            }     
             
     
             

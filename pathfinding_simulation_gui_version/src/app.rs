@@ -5,10 +5,12 @@ mod central_panel;
 mod algorithms;
 mod window_state;
 mod settings;
+mod maze;
 
 pub use window_state::WindowState;
 pub use algorithms::{MazeAlgorithms, PathfindingAlgorithms};
 pub use settings::AppSettings;
+pub use maze::Maze;
 
 
 

@@ -5,6 +5,7 @@ use std::fmt;
 pub enum MazeAlgorithms {
     Prims,
     Kruskals,
+    DFS
 }
 
 impl fmt::Display for MazeAlgorithms {
@@ -12,6 +13,7 @@ impl fmt::Display for MazeAlgorithms {
         let name = match self {
             MazeAlgorithms::Prims => "Prim's Algorithm",
             MazeAlgorithms::Kruskals => "Kruskal's Algorithm",
+            MazeAlgorithms::DFS => "DFS Algorithm"
         };
         write!(f, "{}", name)
     }

@@ -1,4 +1,5 @@
-use egui::InnerResponse;
+use egui::epaint::RectShape;
+use egui::{Color32, InnerResponse, Pos2, Rect, Rounding, Stroke};
 
 use crate::Main;
 
@@ -53,8 +54,26 @@ impl Main {
                                                     self.next_window_id -= 1;
                                                 }
                                                 ui.separator();
-                                                ui.label(format!("Content of {}", window.title));
-                                                });
+                                                
+                                                
+                                                let canvas_size = ui.available_size();
+                                                let (response, painter) = ui.allocate_painter(canvas_size, egui::Sense::hover());
+
+                                                let rect = response.rect;
+
+
+                                                let rounding = Rounding::ZERO;
+                                                let fill_color = Color32::from_rgb(255, 255, 255);
+                                                let stroke = Stroke::new(1.0, Color32::from_rgb(0,0,0));
+
+                                                painter.rect(rect, rounding, fill_color, stroke);
+                                                
+                                                
+                                                
+                                                }); 
+
+                                                
+
                                                 
                                             });
                                         } else {
@@ -79,3 +98,80 @@ impl Main {
     }
 
 }
+
+/*
+
+ // Helper method to draw the maze
+ fn draw_maze(maze: &Maze, painter: &egui::Painter, rect: Rect) {
+    let num_cells_x = maze.width;
+    let num_cells_y = maze.height;
+
+    let cell_width = rect.width() / num_cells_x as f32;
+    let cell_height = rect.height() / num_cells_y as f32;
+
+    for y in 0..num_cells_y {
+        for x in 0..num_cells_x {
+            let node = &maze.grid[y][x];
+
+            let x_pos = rect.min.x + x as f32 * cell_width;
+            let y_pos = rect.min.y + y as f32 * cell_height;
+
+            let cell_rect = Rect::from_min_size(
+                Pos2::new(x_pos, y_pos),
+                egui::vec2(cell_width, cell_height),
+            );
+
+            // Draw the cell background (optional)
+            painter.rect_filled(cell_rect, Rounding::ZERO, Color32::WHITE);
+
+            let stroke = Stroke::new(1.0, Color32::BLACK);
+
+            // Draw the walls based on the `walls` array
+            // walls[0]: Top, walls[1]: Right, walls[2]: Bottom, walls[3]: Left
+
+            // Top wall
+            if node.walls[0] {
+                painter.line_segment(
+                    [
+                        Pos2::new(x_pos, y_pos),
+                        Pos2::new(x_pos + cell_width, y_pos),
+                    ],
+                    stroke,
+                );
+            }
+            // Right wall
+            if node.walls[1] {
+                painter.line_segment(
+                    [
+                        Pos2::new(x_pos + cell_width, y_pos),
+                        Pos2::new(x_pos + cell_width, y_pos + cell_height),
+                    ],
+                    stroke,
+                );
+            }
+            // Bottom wall
+            if node.walls[2] {
+                painter.line_segment(
+                    [
+                        Pos2::new(x_pos + cell_width, y_pos + cell_height),
+                        Pos2::new(x_pos, y_pos + cell_height),
+                    ],
+                    stroke,
+                );
+            }
+            // Left wall
+            if node.walls[3] {
+                painter.line_segment(
+                    [
+                        Pos2::new(x_pos, y_pos + cell_height),
+                        Pos2::new(x_pos, y_pos),
+                    ],
+                    stroke,
+                );
+            }
+        }
+    }
+}
+
+ */
+
