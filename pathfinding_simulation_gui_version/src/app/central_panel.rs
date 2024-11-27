@@ -1,5 +1,5 @@
 use egui::load::SizedTexture;
-use egui::InnerResponse;
+use egui::{Context, InnerResponse, Ui};
 
 use crate::Main;
 
@@ -22,9 +22,7 @@ impl Main {
                 let max_cols = 2;
 
                 let initial_cols = num_of_cells.sqrt().ceil() as usize;
-
                 let num_of_cols = std::cmp::min(initial_cols, max_cols);
-
                 let num_of_rows = (num_of_cells / num_of_cols as f32).ceil() as usize;
 
                 let mut window_iter = open_windows.into_iter();
@@ -53,27 +51,12 @@ impl Main {
                                             }
 
                                             ui.separator();
+                                      
+                                            draw_image(window, ui, ctx);
 
-                                            // Allocate space for the maze image
-                                            let canvas_size = ui.available_size();
 
-                                            // Check if we need to regenerate the texture
-                                            if window.needs_redraw || window.maze_texture.is_none()
-                                            {
-                                                let texture_size = [
-                                                    canvas_size.x as usize,
-                                                    canvas_size.y as usize,
-                                                ];
-                                                window.generate_maze_texture(ctx, texture_size);
-                                            }
 
-                                            // Display the cached maze texture
-                                            if let Some(texture) = &window.maze_texture {
-                                                ui.add(egui::Image::new(SizedTexture::new(
-                                                    texture.id(),
-                                                    canvas_size,
-                                                )));
-                                            }
+
                                         });
                                     });
                                 } else {
@@ -98,5 +81,30 @@ impl Main {
                 window_closed = false;
             }
         });
+    }
+}
+
+
+
+
+
+fn draw_image(window: &mut WindowState, ui: &mut Ui, ctx: &Context ) {
+
+    let canvas_size = ui.available_size();
+
+    if window.needs_redraw || window.maze_texture.is_none()
+    {
+        let texture_size = [
+            canvas_size.x as usize,
+            canvas_size.y as usize,
+        ];
+        window.generate_maze_texture(ctx, texture_size);
+    }
+
+    if let Some(texture) = &window.maze_texture {
+        ui.add(egui::Image::new(SizedTexture::new(
+            texture.id(),
+            canvas_size,
+        )));
     }
 }

@@ -71,18 +71,27 @@ impl Main {
 
             if create_window_btn.clicked() {
                 if self.windows.len() < 4 {
-                    let grid = Maze::new(self.settings.maze_size.0, self.settings.maze_size.1);
-
+                    let mut maze = Maze::new(self.settings.maze_size.0, self.settings.maze_size.1);
+            
+                    match self.settings.maze_algorithm {
+                        MazeAlgorithms::DFS => maze.init_dfs(),
+                        MazeAlgorithms::Prims => maze.init_prims(),
+                        MazeAlgorithms::Kruskals => maze.init_kruskals(),
+                        // Add other algorithms as needed
+                    }
+            
                     let window = WindowState::new(
                         self.next_window_id,
-                        format!("Window {}", self.settings.maze_algorithm),
-                        grid,
+                        format!("Maze {}", self.next_window_id),
+                        maze,
                     );
-
+            
                     self.windows.push(window);
                     self.next_window_id += 1;
                 }
             }
+            
+            
 
             ui.add_space(5.0);
 
@@ -93,6 +102,7 @@ impl Main {
                     for window_index in 0..self.windows.len() {
                         self.windows[window_index].generating = true
                     }
+
                 };
             }
         });
