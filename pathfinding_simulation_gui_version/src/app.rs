@@ -12,6 +12,7 @@ pub use maze::Maze;
 pub use settings::AppSettings;
 pub use window_state::WindowState;
 
+
 pub struct Main {
     settings: AppSettings,
     windows: Vec<WindowState>,

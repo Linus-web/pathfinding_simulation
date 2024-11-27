@@ -38,7 +38,7 @@ impl Main {
             ui.horizontal(|ui| {
                 ui.selectable_value(
                     &mut self.settings.maze_algorithm,
-                    MazeAlgorithms::DFS,
+                    MazeAlgorithms::Dfs,
                     "DFS algorithm",
                 );
             });
@@ -69,12 +69,11 @@ impl Main {
 
             let create_window_btn = ui.button("Create window");
 
-            if create_window_btn.clicked() {
-                if self.windows.len() < 4 {
+            if create_window_btn.clicked() && self.windows.len() < 4  {
                     let mut maze = Maze::new(self.settings.maze_size.0, self.settings.maze_size.1);
             
                     match self.settings.maze_algorithm {
-                        MazeAlgorithms::DFS => maze.init_dfs(),
+                        MazeAlgorithms::Dfs => maze.init_dfs(),
                         MazeAlgorithms::Prims => maze.init_prims(),
                         MazeAlgorithms::Kruskals => maze.init_kruskals(),
                         // Add other algorithms as needed
@@ -88,7 +87,6 @@ impl Main {
             
                     self.windows.push(window);
                     self.next_window_id += 1;
-                }
             }
             
             
@@ -97,12 +95,9 @@ impl Main {
 
             let start_maze_generation_bth = ui.button("generate the mazes");
 
-            if start_maze_generation_bth.clicked() {
-                if self.windows.len() > 0 {
+            if start_maze_generation_bth.clicked() && !self.windows.is_empty() {
                     for window_index in 0..self.windows.len() {
                         self.windows[window_index].generating = true
-                    }
-
                 };
             }
         });

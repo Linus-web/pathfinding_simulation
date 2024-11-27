@@ -5,7 +5,7 @@ pub mod node;
 pub use node::Node;
 
 pub enum MazeGenerator {
-    DFS {
+    Dfs {
         stack: Vec<(usize, usize)>,
     },
     Prims {
@@ -46,14 +46,14 @@ impl Maze {
         }
     }
 
-    /// Initializes the maze for DFS algorithm.
+    /// Initializes the maze for Dfs algorithm.
     pub fn init_dfs(&mut self) {
         let mut rng = thread_rng();
         let start_x = rng.gen_range(0..self.width);
         let start_y = rng.gen_range(0..self.height);
         self.grid[start_y][start_x].visited = true;
 
-        self.generator = Some(MazeGenerator::DFS {
+        self.generator = Some(MazeGenerator::Dfs {
             stack: vec![(start_x, start_y)],
         });
     }
@@ -99,7 +99,7 @@ impl Maze {
 
             // Process the generator
             let generation_complete = match &mut generator {
-                MazeGenerator::DFS { stack } => {
+                MazeGenerator::Dfs { stack } => {
                     if !self.dfs_step(stack) {
                         true // Generation complete
                     } else {
@@ -184,7 +184,7 @@ impl Maze {
         }
 
         // Set `in_stack` for nodes adjacent to walls in the walls list
-        for &(x1, y1, x2, y2) in walls.iter() {
+        for &(_x1, _y1, x2, y2) in walls.iter() {
             self.grid[y2][x2].in_stack = true;
         }
 
