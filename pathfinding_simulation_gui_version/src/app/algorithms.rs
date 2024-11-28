@@ -5,6 +5,7 @@ pub enum MazeAlgorithms {
     Prims,
     Kruskals,
     Dfs,
+    AldousBroder,
 }
 
 impl fmt::Display for MazeAlgorithms {
@@ -13,11 +14,11 @@ impl fmt::Display for MazeAlgorithms {
             MazeAlgorithms::Prims => "Prim's Algorithm",
             MazeAlgorithms::Kruskals => "Kruskal's Algorithm",
             MazeAlgorithms::Dfs => "DFS Algorithm",
+            MazeAlgorithms::AldousBroder => "Aldous-B Algorithm",
         };
         write!(f, "{}", name)
     }
 }
-
 
 
 #[derive(PartialEq)]

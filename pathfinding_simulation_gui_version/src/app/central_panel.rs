@@ -47,10 +47,15 @@ impl Main {
 
                                             ui.horizontal(|ui| {
 
-                                                let timer = egui::Label::new(format!("{:.2?}s",window.generation_time.as_secs_f64()));
+                                                let generating = match window.generating {
+                                                    true => "Generating...",
+                                                    false => "Done Generating!"
+                                                };
 
+                                                let timer = egui::Label::new(format!("{:.2?}s",window.generation_time.as_secs_f64()));
                                                 ui.heading(&window.title);
-                                                ui.add_space(ui.available_width() - 90.0 );
+                                                ui.add_space(ui.available_width() - 200.0 );
+                                                ui.label(generating);
                                                 ui.add(timer);
                                                 if ui.button("Close").clicked() {
                                                     window.is_open = false;

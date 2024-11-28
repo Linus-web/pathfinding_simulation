@@ -57,7 +57,14 @@ impl Main {
                     MazeAlgorithms::Dfs,
                     "DFS algorithm",
                 );
+                ui.selectable_value(
+                    &mut self.settings.maze_algorithm,
+                    MazeAlgorithms::AldousBroder,
+                    "Aldous-broder's algorithm",
+                );
             });
+
+            ui.separator();
 
             ui.add_space(10.0);
 
@@ -70,6 +77,7 @@ impl Main {
                     MazeAlgorithms::Dfs => maze.init_dfs(),
                     MazeAlgorithms::Prims => maze.init_prims(),
                     MazeAlgorithms::Kruskals => maze.init_kruskals(),
+                    MazeAlgorithms::AldousBroder => maze.init_aldous_broder(),
                     // Add other algorithms as needed
                 }
 
@@ -159,7 +167,7 @@ impl Main {
                 ui.label("visualization speed:");
                 ui.add(
                     egui::DragValue::new(&mut self.settings.visualization_speed)
-                        .range(1..=400)
+                        .range(1..=4000)
                         .speed(0.1)
                         .max_decimals(0),
                 );
