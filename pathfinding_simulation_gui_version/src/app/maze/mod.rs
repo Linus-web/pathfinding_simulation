@@ -135,38 +135,39 @@ impl Maze {
         // Initialize the generator
         self.generator = Some(MazeGenerator::Kruskal { edges, sets });
     }
-  
-    pub fn step(&mut self, steps: usize, generation_time: &mut Duration) -> bool {
-        let start = Instant::now(); // Start timing all steps
     
-        for _ in 0..steps {
-            // Take the generator out of self.generator
-            let mut generator = match self.generator.take() {
-                Some(gen) => gen,
-                None => return false, // Generation already complete
-            };
-    
-            // Process the generator
-            let generation_complete = match &mut generator {
-                MazeGenerator::Dfs { stack } => !self.dfs_step(stack),
-                MazeGenerator::Prims { walls } => !self.prims_step(walls),
-                MazeGenerator::AldousBroder { current, unvisited } => !self.aldous_broder_step(current, unvisited),
-                MazeGenerator::Kruskal { edges, sets } => !self.kruskal_step(edges,sets),
-            };
-    
-            if generation_complete {
-                self.generator = None; // Generation complete
-                *generation_time += start.elapsed(); // Accumulate total time
-                return false;
+        pub fn step(&mut self, steps: usize, generation_time: &mut Duration) -> bool {
+            
+            let start = Instant::now(); // Start timing all steps
+        
+            for _ in 0..steps {
+                // Take the generator out of self.generator
+                let mut generator = match self.generator.take() {
+                    Some(gen) => gen,
+                    None => return false, // Generation already complete
+                };
+        
+                // Process the generator
+                let generation_complete = match &mut generator {
+                    MazeGenerator::Dfs { stack } => !self.dfs_step(stack),
+                    MazeGenerator::Prims { walls } => !self.prims_step(walls),
+                    MazeGenerator::AldousBroder { current, unvisited } => !self.aldous_broder_step(current, unvisited),
+                    MazeGenerator::Kruskal { edges, sets } => !self.kruskal_step(edges,sets),
+                };
+        
+                if generation_complete {
+                    self.generator = None; // Generation complete
+                    *generation_time += start.elapsed(); // Accumulate total time
+                    return false;
+                }
+        
+                // Restore the generator for the next iteration
+                self.generator = Some(generator);
             }
-    
-            // Restore the generator for the next iteration
-            self.generator = Some(generator);
+        
+            *generation_time += start.elapsed(); // Accumulate total time for all steps
+            true // Generation still in progress
         }
-    
-        *generation_time += start.elapsed(); // Accumulate total time for all steps
-        true // Generation still in progress
-    }
     
     
 
