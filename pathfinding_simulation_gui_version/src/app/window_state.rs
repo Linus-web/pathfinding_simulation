@@ -60,8 +60,6 @@ impl WindowState {
         let pixels_per_cell_y = image.size[1] as f32 / maze_height as f32;
 
         let wall_color = Color32::BLACK;
-        let current_node_color = Color32::RED;
-        let in_stack_color = Color32::from_rgb(255, 165, 0); // Orange
         let visited_color = Color32::WHITE;
         let unvisited_color = Color32::GRAY;
 
@@ -75,11 +73,7 @@ impl WindowState {
                 let y_end = ((y + 1) as f32 * pixels_per_cell_y) as usize;
 
                 // Determine the fill color for the cell
-                let fill_color = if node.is_current {
-                    current_node_color
-                } else if node.in_stack {
-                    in_stack_color
-                } else if node.visited {
+                let fill_color = if node.visited {
                     visited_color
                 } else {
                     unvisited_color

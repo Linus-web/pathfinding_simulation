@@ -43,8 +43,6 @@ impl Maze {
                         y,
                         visited: false,
                         walls: [true, true, true, true],
-                        is_current: false,
-                        in_stack: false,
                     })
                     .collect()
             })
@@ -173,18 +171,6 @@ impl Maze {
     
 
     fn dfs_step(&mut self, stack: &mut Vec<(usize, usize)>) -> bool {
-        // Clear the `is_current` and `in_stack` flags for all nodes
-        for row in &mut self.grid {
-            for node in row {
-                node.is_current = false;
-                node.in_stack = false;
-            }
-        }
-
-        // Set `in_stack` for nodes in the stack
-        for &(x, y) in stack.iter() {
-            self.grid[y][x].in_stack = true;
-        }
 
         if let Some((x, y)) = stack.pop() {
             // Same logic as before but for a single step
@@ -221,18 +207,6 @@ impl Maze {
     }
 
     fn prims_step(&mut self, walls: &mut Vec<(usize, usize, usize, usize)>) -> bool {
-        // Clear the `is_current` and `in_stack` flags for all nodes
-        for row in &mut self.grid {
-            for node in row {
-                node.is_current = false;
-                node.in_stack = false;
-            }
-        }
-
-        // Set `in_stack` for nodes adjacent to walls in the walls list
-        for &(_x1, _y1, x2, y2) in walls.iter() {
-            self.grid[y2][x2].in_stack = true;
-        }
 
         if let Some(index) = (0..walls.len()).choose(&mut thread_rng()) {
             let (x1, y1, x2, y2) = walls.remove(index);
@@ -277,7 +251,6 @@ impl Maze {
             false // Walls list is empty, generation complete
         }
     }
-
 
     fn aldous_broder_step(&mut self,current: &mut (usize, usize),unvisited: &mut usize,) -> bool {
         let mut rng = thread_rng();

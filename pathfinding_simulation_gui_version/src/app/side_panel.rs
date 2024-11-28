@@ -6,7 +6,7 @@ use crate::Main;
 use super::{Maze, PathfindingAlgorithms};
 
 impl Main {
-    pub fn generate_side_panel(&mut self, ctx: &egui::Context, integration_info : &eframe::IntegrationInfo) -> InnerResponse<()> {
+    pub fn generate_side_panel(&mut self, ctx: &egui::Context) -> InnerResponse<()> {
         return egui::SidePanel::left("side_panel").show(ctx, |ui| {
             ui.set_min_width(250.0);
 
@@ -23,7 +23,7 @@ impl Main {
             self.generate_settings_side_section(ui);
 
 
-            self.generate_info_side_section(ui, integration_info);
+            self.generate_info_side_section(ui);
 
         });
     }
@@ -202,13 +202,13 @@ impl Main {
     }
 
 
-    fn generate_info_side_section(&mut self, ui: &mut egui::Ui, integration_info: &eframe::IntegrationInfo) {
+    fn generate_info_side_section(&mut self, ui: &mut egui::Ui) {
         ui.heading("Info");
 
-        if let Some(cpu_usage) = integration_info.cpu_usage {
-            ui.label(format!("CPU Usage: {:.2} ms/frame", cpu_usage * 1000.0));
+        if self.smoothed_fps > 0.0 {
+            ui.label(format!("FPS: {:.2}", self.smoothed_fps));
         } else {
-            ui.label("CPU Usage: N/A");
+            ui.label("FPS: Calculating...");
         }
 
         ui.add_space(15.0);

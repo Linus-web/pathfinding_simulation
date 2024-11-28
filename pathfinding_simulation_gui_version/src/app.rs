@@ -1,5 +1,7 @@
 // app.rs
 
+use std::time::Instant;
+
 use rayon::prelude::*;
 
 
@@ -20,6 +22,11 @@ pub struct Main {
     settings: AppSettings,
     windows: Vec<WindowState>,
     next_window_id: usize,
+
+
+    last_frame_time: Option<Instant>,
+    smoothed_fps: f64,
+
 }
 
 impl Default for Main {
@@ -28,6 +35,10 @@ impl Default for Main {
             settings: AppSettings::default(),
             windows: Vec::new(),
             next_window_id: 0,
+
+            last_frame_time: None,
+            smoothed_fps: 60.0, 
+
         }
     }
 }
@@ -37,6 +48,7 @@ impl Main {
         Self::default()
     }
 }
+
 /*
 impl eframe::App for Main {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
@@ -74,20 +86,36 @@ impl eframe::App for Main {
 
 */
 
-
 impl eframe::App for Main {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Calculate the desired frame duration based on desired FPS
+        let desired_fps = self.settings.desired_fps; // You can set this in your settings
+        let frame_duration = std::time::Duration::from_secs_f64(1.0 / desired_fps as f64);
+
+        let now = Instant::now();
+        if let Some(last_time) = self.last_frame_time {
+            let delta = now.duration_since(last_time);
+            let fps = 1.0 / delta.as_secs_f64();
+
+            // Apply Exponential Moving Average for smoothing
+            let smoothing_factor = 0.05; // Adjust this between 0 and 1 (lower means more smoothing)
+            self.smoothed_fps = (fps * smoothing_factor) + (self.smoothed_fps * (1.0 - smoothing_factor));
+        }
+        self.last_frame_time = Some(now);
+
         // Flag to indicate if any maze is still generating
         let any_maze_generating = std::sync::atomic::AtomicBool::new(false);
 
         // Perform maze generation steps in parallel
         self.windows
-            .par_iter_mut() // Use rayon's parallel iterator
+            .par_iter_mut()
             .for_each(|window| {
                 if window.generating {
                     // Perform a number of steps based on visualization speed
-                    let generation_continues =
-                        window.maze.step(self.settings.visualization_speed as usize, &mut window.generation_time);
+                    let generation_continues = window.maze.step(
+                        self.settings.visualization_speed as usize,
+                        &mut window.generation_time,
+                    );
                     if !generation_continues {
                         // Maze generation is complete
                         window.generating = false;
@@ -99,17 +127,10 @@ impl eframe::App for Main {
             });
 
         // Proceed with your normal UI code
-        let integration_info = &frame.info();
-
-        self.generate_side_panel(ctx, integration_info);
+        self.generate_side_panel(ctx);
         self.generate_central_panel(ctx);
 
-        // Request a repaint if any window needs to be redrawn
-        if any_maze_generating.load(std::sync::atomic::Ordering::Relaxed)
-            || self.windows.iter().any(|w| w.needs_redraw)
-        {
-            ctx.request_repaint();
-        }
+        // Request a repaint after the desired frame duration
+        ctx.request_repaint_after(frame_duration);
     }
 }
-

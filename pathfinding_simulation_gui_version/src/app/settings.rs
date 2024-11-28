@@ -5,6 +5,7 @@ pub struct AppSettings {
     pub pathfinding_algorithm: PathfindingAlgorithms,
     pub maze_size: (usize, usize),
     pub visualization_speed: i32,
+    pub desired_fps: usize, 
 }
 
 impl Default for AppSettings {
@@ -14,6 +15,7 @@ impl Default for AppSettings {
             pathfinding_algorithm: PathfindingAlgorithms::Astar,
             maze_size: (160, 100),
             visualization_speed: 100,
+            desired_fps: 60,
         }
     }
 }
