@@ -1,5 +1,8 @@
 // app.rs
 
+use rayon::prelude::*;
+
+
 mod algorithms;
 mod central_panel;
 mod maze;
@@ -34,7 +37,7 @@ impl Main {
         Self::default()
     }
 }
-
+/*
 impl eframe::App for Main {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         // Flag to indicate if any maze is still generating
@@ -68,3 +71,45 @@ impl eframe::App for Main {
         }
     }
 }
+
+*/
+
+
+impl eframe::App for Main {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        // Flag to indicate if any maze is still generating
+        let any_maze_generating = std::sync::atomic::AtomicBool::new(false);
+
+        // Perform maze generation steps in parallel
+        self.windows
+            .par_iter_mut() // Use rayon's parallel iterator
+            .for_each(|window| {
+                if window.generating {
+                    // Perform a number of steps based on visualization speed
+                    let generation_continues =
+                        window.maze.step(self.settings.visualization_speed as usize, &mut window.generation_time);
+                    if !generation_continues {
+                        // Maze generation is complete
+                        window.generating = false;
+                    } else {
+                        any_maze_generating.store(true, std::sync::atomic::Ordering::Relaxed);
+                    }
+                    window.needs_redraw = true; // Maze has changed, needs to be redrawn
+                }
+            });
+
+        // Proceed with your normal UI code
+        let integration_info = &frame.info();
+
+        self.generate_side_panel(ctx, integration_info);
+        self.generate_central_panel(ctx);
+
+        // Request a repaint if any window needs to be redrawn
+        if any_maze_generating.load(std::sync::atomic::Ordering::Relaxed)
+            || self.windows.iter().any(|w| w.needs_redraw)
+        {
+            ctx.request_repaint();
+        }
+    }
+}
+

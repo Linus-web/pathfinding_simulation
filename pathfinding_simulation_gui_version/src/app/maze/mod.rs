@@ -1,8 +1,11 @@
+use std::time::{Duration, Instant};
+
 use rand::seq::{IteratorRandom, SliceRandom};
 use rand::{thread_rng, Rng};
 pub mod node;
 
 pub use node::Node;
+
 
 pub enum MazeGenerator {
     Dfs {
@@ -89,7 +92,10 @@ impl Maze {
         self.generator = None;
     }
 
-    pub fn step(&mut self, steps: usize) -> bool {
+    pub fn step(&mut self, steps: usize, generation_time: &mut Duration) -> bool {
+
+        let start = Instant::now();
+
         for _ in 0..steps {
             // Take the generator out of self.generator
             let mut generator = match self.generator.take() {
@@ -117,12 +123,14 @@ impl Maze {
 
             if generation_complete {
                 self.generator = None; // Generation complete
+                *generation_time += start.elapsed();
                 return false;
             } else {
                 // Put the generator back into self.generator
                 self.generator = Some(generator);
             }
         }
+        *generation_time += start.elapsed();
         true // Generation still in progress
     }
 

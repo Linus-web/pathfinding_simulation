@@ -18,7 +18,7 @@ impl Main {
             let num_windows = open_windows.len();
 
             if num_windows > 0 {
-                let num_of_cells = open_windows.len() as f32; // N
+                let num_of_cells = open_windows.len() as f32;
                 let max_cols = 2;
 
                 let initial_cols = num_of_cells.sqrt().ceil() as usize;
@@ -27,8 +27,8 @@ impl Main {
 
                 let mut window_iter = open_windows.into_iter();
 
-                let cell_width = available_size.x / num_of_cols as f32;
-                let cell_height = available_size.y / num_of_rows as f32;
+                let cell_width = (available_size.x - 30.0) / num_of_cols as f32;
+                let cell_height = (available_size.y - 30.0) / num_of_rows as f32;
 
                 egui::Grid::new("window_grid")
                     .num_columns(num_of_cols)
@@ -45,11 +45,18 @@ impl Main {
 
                                         ui.vertical(|ui| {
 
-                                            ui.heading(&window.title);
-                                            if ui.button("Close").clicked() {
-                                                window.is_open = false;
-                                                window_closed = true;
-                                            }
+                                            ui.horizontal(|ui| {
+
+                                                let timer = egui::Label::new(format!("{:.2?}s",window.generation_time.as_secs_f64()));
+
+                                                ui.heading(&window.title);
+                                                ui.add_space(ui.available_width() - 90.0 );
+                                                ui.add(timer);
+                                                if ui.button("Close").clicked() {
+                                                    window.is_open = false;
+                                                    window_closed = true;
+                                                }
+                                            });
 
                                             ui.separator();
                                       
