@@ -12,8 +12,8 @@ impl Default for AppSettings {
         Self {
             maze_algorithm: MazeAlgorithms::Prims,
             pathfinding_algorithm: PathfindingAlgorithms::Astar,
-            maze_size: (100, 100),
-            visualization_speed: 10,
+            maze_size: (160, 100),
+            visualization_speed: 100,
         }
     }
 }

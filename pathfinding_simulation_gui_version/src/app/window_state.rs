@@ -1,8 +1,6 @@
 use crate::app::Maze;
 use egui::{Color32, TextureHandle, TextureOptions};
 
-use super::MazeAlgorithms;
-
 pub struct WindowState {
     pub id: usize,            // Unique identifier for the window
     pub title: String,        // Title of the window

@@ -44,6 +44,7 @@ impl Main {
                                         ui.set_max_width(cell_width);
 
                                         ui.vertical(|ui| {
+
                                             ui.heading(&window.title);
                                             if ui.button("Close").clicked() {
                                                 window.is_open = false;
@@ -53,8 +54,6 @@ impl Main {
                                             ui.separator();
                                       
                                             draw_image(window, ui, ctx);
-
-
 
 
                                         });
@@ -83,8 +82,6 @@ impl Main {
         });
     }
 }
-
-
 
 
 

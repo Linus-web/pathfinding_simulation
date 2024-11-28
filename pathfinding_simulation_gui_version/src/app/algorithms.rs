@@ -18,10 +18,24 @@ impl fmt::Display for MazeAlgorithms {
     }
 }
 
+
+
 #[derive(PartialEq)]
 pub enum PathfindingAlgorithms {
     Astar,
     Dijkstra,
     Bfs,
     Dfs,
+}
+
+impl fmt::Display for PathfindingAlgorithms {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            PathfindingAlgorithms::Astar => "Astar Algorithm",
+            PathfindingAlgorithms::Bfs => "BFS Algorithm",
+            PathfindingAlgorithms::Dfs => "DFS Algorithm",
+            PathfindingAlgorithms::Dijkstra => "Dijkstra's Algorithm",
+        };
+        write!(f, "{}", name)
+    }
 }

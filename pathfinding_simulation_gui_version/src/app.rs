@@ -36,7 +36,7 @@ impl Main {
 }
 
 impl eframe::App for Main {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         // Flag to indicate if any maze is still generating
         let mut any_maze_generating = false;
 
@@ -56,7 +56,10 @@ impl eframe::App for Main {
         }
 
         // Proceed with your normal UI code
-        self.generate_side_panel(ctx);
+
+        let integration_info = &frame.info();
+
+        self.generate_side_panel(ctx, integration_info);
         self.generate_central_panel(ctx);
 
         // Request a repaint if any window needs to be redrawn
