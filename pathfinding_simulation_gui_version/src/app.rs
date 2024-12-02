@@ -1,5 +1,4 @@
 // app.rs
-
 use rayon::prelude::*;
 
 
@@ -20,9 +19,8 @@ pub struct Main {
     settings: AppSettings,
     windows: Vec<WindowState>,
     next_window_id: usize,
-
+    pub selected_window_id: Option<usize>,
     last_frame_fps: usize,
-    
 }
 
 impl Default for Main {
@@ -31,7 +29,7 @@ impl Default for Main {
             settings: AppSettings::default(),
             windows: Vec::new(),
             next_window_id: 0,
-
+            selected_window_id: None,
             last_frame_fps: 0,
         }
     }
@@ -84,6 +82,11 @@ impl eframe::App for Main {
 impl eframe::App for Main {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         // Flag to indicate if any maze is still generating
+
+        if ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
+            self.selected_window_id = None;
+        }
+
         let any_maze_generating = std::sync::atomic::AtomicBool::new(false);
 
         // Perform maze generation steps in parallel

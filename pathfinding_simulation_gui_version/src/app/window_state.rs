@@ -7,6 +7,7 @@ pub struct WindowState {
     pub id: usize,        // Unique identifier for the window
     pub title: String,    // Title of the window
     pub is_open: bool,    // Whether the window is open
+
     pub generating: bool, // Whether the maze is currently being generated
     pub maze: Maze,       // The maze data
 

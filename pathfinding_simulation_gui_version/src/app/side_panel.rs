@@ -218,5 +218,7 @@ impl Main {
     
         ui.add_space(15.0);
         ui.separator();
+
+        ui.label(format!("selected window: {:?}", self.selected_window_id));
     }
 }
